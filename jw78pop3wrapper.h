@@ -5,17 +5,18 @@
 #include <string>
 #include <vector>
 
+namespace jw78 {
 
-class jw78Pop3Wrapper
+class Pop3Wrapper
 {
     std::string host;
     std::string user;
     std::string password;
-    jw78CurlWrapper cw;
+    CurlWrapper cw;
 public:
-    jw78Pop3Wrapper(std::string const &h,
-                    std::string const &u,
-                    std::string const &pwd);
+    Pop3Wrapper(std::string const &h,
+                std::string const &u,
+                std::string const &pwd);
 
     bool retrieveEMail(int number,
                        std::string &target);
@@ -24,5 +25,7 @@ public:
     void eMailSizes(std::vector<size_t> &sizes);
 
 };
+
+}
 
 #endif // JW78POP3WRAPPER_H

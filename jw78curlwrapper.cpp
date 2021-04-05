@@ -3,34 +3,34 @@
 #include <sstream>
 #include <cstring>
 
-size_t jw78CurlWrapper::globalInitCount(0);
+size_t jw78::CurlWrapper::globalInitCount(0);
 
-size_t myWriteFunction(void *contents, size_t size, size_t nmemb, void *userp)
+size_t jw78::myWriteFunction(void *contents, size_t size, size_t nmemb, void *userp)
 {
     size_t realsize = size * nmemb;
-    jw78CurlWrapper::sTarget *target(static_cast<jw78CurlWrapper::sTarget*>(userp));
+    jw78::CurlWrapper::sTarget *target(static_cast<jw78::CurlWrapper::sTarget*>(userp));
     target->add(static_cast<char*>(contents), realsize);
     return realsize;
 }
 
-int myDebugFunction(CURL *handle,
+int jw78::myDebugFunction(CURL *handle,
                    curl_infotype type,
                    char *data,
                    size_t size,
                    void *userptr)
 {
-    jw78CurlWrapper::sTarget *target(static_cast<jw78CurlWrapper::sTarget*>(userptr));
+    jw78::CurlWrapper::sTarget *target(static_cast<jw78::CurlWrapper::sTarget*>(userptr));
     target->addDebug(data, size);
     return 0;
 }
 
-size_t payloadSource(void *ptr, size_t size, size_t nmemb, void *userp)
+size_t jw78::payloadSource(void *ptr, size_t size, size_t nmemb, void *userp)
 {
     if ((size == 0) || (nmemb == 0) || ((size*nmemb) < 1))
     {
         return 0;
     }
-    jw78CurlWrapper *curlWrapper((jw78CurlWrapper*)userp);
+    jw78::CurlWrapper *curlWrapper((jw78::CurlWrapper*)userp);
     if (curlWrapper->payloadPosition >= curlWrapper->payload.size())
     {
         return 0;
@@ -44,17 +44,17 @@ size_t payloadSource(void *ptr, size_t size, size_t nmemb, void *userp)
     return len;
 }
 
-void jw78CurlWrapper::setOpt(CURLoption option, long i)
+void jw78::CurlWrapper::setOpt(CURLoption option, long i)
 {
     curl_easy_setopt(curl, option, i);
 }
 
-void jw78CurlWrapper::setOpt(CURLoption option, const std::string &s)
+void jw78::CurlWrapper::setOpt(CURLoption option, const std::string &s)
 {
     curl_easy_setopt(curl, option, s.c_str());
 }
 
-jw78CurlWrapper::jw78CurlWrapper():
+jw78::CurlWrapper::CurlWrapper():
     curl(nullptr)
 {
     if (globalInitCount == 0)
@@ -71,7 +71,7 @@ jw78CurlWrapper::jw78CurlWrapper():
     setOpt(CURLOPT_VERBOSE, 1L);
 }
 
-jw78CurlWrapper::~jw78CurlWrapper()
+jw78::CurlWrapper::~CurlWrapper()
 {
     curl_easy_cleanup(curl);
     globalInitCount -= 1;
@@ -81,13 +81,13 @@ jw78CurlWrapper::~jw78CurlWrapper()
     }
 }
 
-void jw78CurlWrapper::setUserAndPassword(const std::string &user, const std::string &password)
+void jw78::CurlWrapper::setUserAndPassword(const std::string &user, const std::string &password)
 {
     setOpt(CURLOPT_USERNAME, user);
     setOpt(CURLOPT_PASSWORD, password);
 }
 
-bool jw78CurlWrapper::pop3NumberAndSizes(const std::string &host,
+bool jw78::CurlWrapper::pop3NumberAndSizes(const std::string &host,
                                          const std::string &user,
                                          const std::string &password,
                                          std::string &target)
@@ -102,7 +102,7 @@ bool jw78CurlWrapper::pop3NumberAndSizes(const std::string &host,
 
 
 
-bool jw78CurlWrapper::pop3Retrieve(const std::string &host,
+bool jw78::CurlWrapper::pop3Retrieve(const std::string &host,
                                    const std::string &user,
                                    const std::string &password,
                                    const int number,
@@ -119,7 +119,7 @@ bool jw78CurlWrapper::pop3Retrieve(const std::string &host,
     return res == CURLE_OK;
 }
 
-bool jw78CurlWrapper::pop3Delete(const std::string &host,
+bool jw78::CurlWrapper::pop3Delete(const std::string &host,
                                  const std::string &user,
                                  const std::string &password,
                                  const int number)
@@ -139,19 +139,7 @@ bool jw78CurlWrapper::pop3Delete(const std::string &host,
     return res == CURLE_OK;
 }
 
-bool jw78CurlWrapper::imapFetchFolderList(const std::string &host, const std::string &user, const std::string &password, const std::string &folder)
-{
-    setUserAndPassword(user, password);
-    std::string url("imaps://");
-    url += host;
-    url += folder;
-    setOpt(CURLOPT_URL, url);
-    std::string result;
-    CURLcode res(curlPerformToString(result));
-    return res == CURLE_OK;
-}
-
-void jw78CurlWrapper::smtpSendMail(const std::string &host,
+void jw78::CurlWrapper::smtpSendMail(const std::string &host,
                                    const std::string &user,
                                    const std::string &password,
                                    const std::string &mailFrom,
@@ -194,14 +182,14 @@ void jw78CurlWrapper::smtpSendMail(const std::string &host,
     logResult = target.stringDebugTarget;
 }
 
-bool jw78CurlWrapper::get(const std::string &url, std::string &result, std::string &message)
+bool jw78::CurlWrapper::get(const std::string &url, std::string &result, std::string &message)
 {
     setOpt(CURLOPT_URL, url);
     CURLcode res(curlPerformToString(result));
     return res == CURLE_OK;
 }
 
-bool jw78CurlWrapper::httpsPost(const std::string &url,
+bool jw78::CurlWrapper::httpsPost(const std::string &url,
                                 const std::string &postData,
                                 std::string &result,
                                 std::string &message)
@@ -213,7 +201,7 @@ bool jw78CurlWrapper::httpsPost(const std::string &url,
     return res == CURLE_OK;
 }
 
-CURLcode jw78CurlWrapper::curlPerformToString(std::string &result)
+CURLcode jw78::CurlWrapper::curlPerformToString(std::string &result)
 {
     sTarget target(result);
     curl_easy_setopt(curl, CURLOPT_WRITEDATA, (void *)&target);

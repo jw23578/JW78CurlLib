@@ -1,7 +1,7 @@
 #include "jw78pop3wrapper.h"
 #include "extstring.h"
 
-jw78Pop3Wrapper::jw78Pop3Wrapper(const std::string &h,
+jw78::Pop3Wrapper::Pop3Wrapper(const std::string &h,
                                  const std::string &u,
                                  const std::string &pwd):
     host(h),
@@ -11,7 +11,7 @@ jw78Pop3Wrapper::jw78Pop3Wrapper(const std::string &h,
 
 }
 
-bool jw78Pop3Wrapper::retrieveEMail(int number, std::string &target)
+bool jw78::Pop3Wrapper::retrieveEMail(int number, std::string &target)
 {
     cw.pop3Retrieve(host,
                     user,
@@ -21,7 +21,7 @@ bool jw78Pop3Wrapper::retrieveEMail(int number, std::string &target)
     return target.size() > 0;
 }
 
-bool jw78Pop3Wrapper::deleteEMail(int number)
+bool jw78::Pop3Wrapper::deleteEMail(int number)
 {
     return cw.pop3Delete(host,
                          user,
@@ -29,7 +29,7 @@ bool jw78Pop3Wrapper::deleteEMail(int number)
                          number);
 }
 
-void jw78Pop3Wrapper::eMailSizes(std::vector<size_t> &sizes)
+void jw78::Pop3Wrapper::eMailSizes(std::vector<size_t> &sizes)
 {
     std::string result;
     if (cw.pop3NumberAndSizes(host, user, password, result))

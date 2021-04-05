@@ -134,7 +134,7 @@ void jw78::SMTPWrapper::internalSend()
         password = defaultPassword;
         user = defaultUser;
     }
-    jw78CurlWrapper curlWrapper;
+    CurlWrapper curlWrapper;
     std::string logResult;
     curlWrapper.smtpSendMail(host,
                              user,

@@ -6,7 +6,9 @@
 #include <fstream>
 #include <vector>
 
-class jw78CurlWrapper
+namespace jw78 {
+
+class CurlWrapper
 {
     friend size_t myWriteFunction(void *contents, size_t size, size_t nmemb, void *userp);
     friend int myDebugFunction(CURL *handle,
@@ -52,8 +54,8 @@ class jw78CurlWrapper
 
 public:
     static size_t globalInitCount;
-    jw78CurlWrapper();
-    ~jw78CurlWrapper();
+    CurlWrapper();
+    ~CurlWrapper();
 
     void setUserAndPassword(std::string const &user,
                             std::string const &password);
@@ -71,10 +73,6 @@ public:
                     std::string const &user,
                     std::string const &password,
                     const int number);
-    bool imapFetchFolderList(std::string const &host,
-                             std::string const &user,
-                             std::string const &password,
-                             std::string const &folder);
     void smtpSendMail(std::string const &host,
                       std::string const &user,
                       std::string const &password,
@@ -97,5 +95,8 @@ public:
 
     CURLcode curlPerformToString(std::string &result);
 };
+
+}
+
 
 #endif // JW78CURLWRAPPER_H
