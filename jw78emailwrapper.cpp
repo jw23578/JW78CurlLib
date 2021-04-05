@@ -2,7 +2,7 @@
 #include <fstream>
 #include <iostream>
 
-void jw78EMailWrapper::parse()
+void jw78::EMailWrapper::parse()
 {
     if (parsed)
     {
@@ -46,25 +46,25 @@ void jw78EMailWrapper::parse()
     }
 }
 
-jw78EMailWrapper::jw78EMailWrapper(const std::string &c):
+jw78::EMailWrapper::EMailWrapper(const std::string &c):
     completeContent(c)
 {
 
 }
 
-void jw78EMailWrapper::saveToFile(const std::string &filename)
+void jw78::EMailWrapper::saveToFile(const std::string &filename)
 {
     std::ofstream f(filename);
     f << completeContent;
 }
 
-std::string_view jw78EMailWrapper::getFromLine()
+std::string_view jw78::EMailWrapper::getFromLine()
 {
     parse();
     return fromLine;
 }
 
-std::string_view jw78EMailWrapper::getMessageIdLine()
+std::string_view jw78::EMailWrapper::getMessageIdLine()
 {
     parse();
     return messageIdLine;

@@ -4,7 +4,9 @@
 #include <string_view>
 #include <string>
 
-class jw78EMailWrapper
+namespace jw78 {
+
+class EMailWrapper
 {
     std::string_view completeContent;
     bool parsed = {false};
@@ -15,10 +17,11 @@ class jw78EMailWrapper
     std::string_view dateLine;
     std::string_view messageIdLine;
 public:
-    jw78EMailWrapper(std::string const &c);
+    EMailWrapper(std::string const &c);
     void saveToFile(std::string const &filename);
     std::string_view getFromLine();
     std::string_view getMessageIdLine();
 };
 
+}
 #endif // JW78EMAILWRAPPER_H
