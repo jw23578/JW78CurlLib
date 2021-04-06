@@ -182,6 +182,15 @@ void jw78::CurlWrapper::smtpSendMail(const std::string &host,
     logResult = target.stringDebugTarget;
 }
 
+bool jw78::CurlWrapper::customRequest(const std::string &url,
+                                      const std::string &request,
+                                      std::string &result,
+                                      std::string &message)
+{
+    setOpt(CURLOPT_CUSTOMREQUEST, request);
+    return get(url, result, message);
+}
+
 bool jw78::CurlWrapper::get(const std::string &url, std::string &result, std::string &message)
 {
     setOpt(CURLOPT_URL, url);

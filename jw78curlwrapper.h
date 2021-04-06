@@ -83,7 +83,10 @@ public:
                       std::string const &emailPayload,
                       std::string &logResult);
 
-
+    bool customRequest(const std::string &url,
+                       const std::string &request,
+                       std::string &result,
+                       std::string &message);
     bool get(std::string const &url,
              std::string &result,
              std::string &message);
