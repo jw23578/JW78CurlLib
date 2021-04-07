@@ -191,8 +191,11 @@ bool jw78::CurlWrapper::customRequest(const std::string &url,
     return get(url, result, message);
 }
 
-bool jw78::CurlWrapper::get(const std::string &url, std::string &result, std::string &message)
+bool jw78::CurlWrapper::get(const std::string &url,
+                            std::string &result,
+                            std::string &message)
 {
+    result = message = "";
     setOpt(CURLOPT_URL, url);
     CURLcode res(curlPerformToString(result));
     return res == CURLE_OK;
@@ -215,5 +218,6 @@ CURLcode jw78::CurlWrapper::curlPerformToString(std::string &result)
     sTarget target(result);
     curl_easy_setopt(curl, CURLOPT_WRITEDATA, (void *)&target);
     curl_easy_setopt(curl, CURLOPT_DEBUGDATA, (void *)&target);
-    return curl_easy_perform(curl);
+    CURLcode code(curl_easy_perform(curl));
+    return code;
 }
