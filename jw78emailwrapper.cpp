@@ -46,7 +46,9 @@ void jw78::EMailWrapper::parse()
     }
 }
 
-jw78::EMailWrapper::EMailWrapper(const std::string &c):
+jw78::EMailWrapper::EMailWrapper(std::string const &uid,
+                                 const std::string &c):
+    uid(uid),
     completeContent(c)
 {
 
