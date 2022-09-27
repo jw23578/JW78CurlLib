@@ -2,7 +2,7 @@ INCLUDEPATH += $$PWD
 
 CONFIG += c++17
 
-LIBS += -lcurl
+LIBS += -lcurl -lpthread
 
 HEADERS +=  \
     $$PWD/jw78curlwrapper.h \

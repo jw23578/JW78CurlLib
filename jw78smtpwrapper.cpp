@@ -9,9 +9,7 @@
 #include <boost/algorithm/string/erase.hpp>
 #include <boost/algorithm/string/replace.hpp>
 #include <ctime>
-#include "jw78core_debug.h"
-#include "jw78core_helper.h"
-#include <base64.h>
+#include "utils/base64.h"
 
 
 std::string jw78::SMTPWrapper::defaultUser;
@@ -95,7 +93,7 @@ void jw78::SMTPWrapper::createEmptyEMail(std::string const &subject,
     html += text;
     html += "</body>\r\n";
     html += "</html>\r\n";
-
+    base64Mail = true;
     base64content = html;
 }
 
@@ -125,9 +123,13 @@ void jw78::SMTPWrapper::internalSend()
         receiver += cc_addr[i];
         receiver += "\r\n";
     }
+    if (reply_to.size())
+    {
+        receiver += "Reply-To: ";
+        receiver += reply_to;
+        receiver += "\r\n";
+    }
     content = receiver + content;
-    jw78core::debug::gi()->d(__FILE__, __LINE__, std::string("from: ") + from_addr);
-    jw78core::debug::gi()->d(__FILE__, __LINE__, std::string("content: ") + content.substr(0, 200));
     if (host == "")
     {
         host = defaultHost;
@@ -145,7 +147,6 @@ void jw78::SMTPWrapper::internalSend()
                              bcc_addr,
                              content,
                              logResult);
-    jw78core::debug::gi()->d(__FILE__, __LINE__, std::string("smtp logResult: ") + logResult);
 }
 
 std::string jw78::SMTPWrapper::getEMLFrom(const std::string &prefix)

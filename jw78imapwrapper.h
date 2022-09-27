@@ -44,7 +44,10 @@ public:
     bool fetchFolder(std::string &errorMessage);
     bool updateFolder(IMAPFolder &folder);
     bool fetchEMail(const std::string &uid);
-    bool fetchHeader(const std::string &uid);
+    bool fetchHeader(const std::string &uid,
+                     std::string &header);
+    bool fetchText(const std::string &uid,
+                   std::string &text);
 };
 
 }

@@ -1,5 +1,5 @@
 #include "jw78pop3wrapper.h"
-#include "extstring.h"
+#include "utils/extstring.h"
 
 jw78::Pop3Wrapper::Pop3Wrapper(const std::string &h,
                                  const std::string &u,
@@ -35,12 +35,12 @@ void jw78::Pop3Wrapper::eMailSizes(std::vector<size_t> &sizes)
     if (cw.pop3NumberAndSizes(host, user, password, result))
     {
         std::vector<std::string> lines;
-        extString::split(result, "\r\n", lines);
+        ExtString::split(result, "\r\n", lines);
         for (auto l : lines)
         {
-            std::string r(extString::rightOf(l, " "));
+            std::string r(ExtString::rightOf(l, " "));
             size_t size(0);
-            extString::to(r, size);
+            ExtString::to(r, size);
             sizes.push_back(size);
         }
     }

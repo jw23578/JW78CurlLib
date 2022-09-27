@@ -5,7 +5,7 @@
 #include <map>
 #include <vector>
 #include <thread>
-#include "jw78ThreadSafeQueue.h"
+#include "utils/threadsafequeue.h"
 
 namespace jw78
 {
@@ -34,6 +34,7 @@ public:
     std::vector<std::string> to_addr;
     std::vector<std::string> cc_addr;
     std::vector<std::string> bcc_addr;
+    std::string reply_to;
     std::string content;
     std::string base64content;
     size_t content_position;

@@ -1,7 +1,7 @@
 #include "jw78imapwrapper.h"
 #include "jw78curlwrapper.h"
-#include "extstring.h"
-#include "extvector.h"
+#include "utils/extstring.h"
+#include "utils/extvector.h"
 
 jw78::IMAPWrapper::IMAPWrapper(const std::string &host,
                                const int port,
@@ -13,7 +13,7 @@ jw78::IMAPWrapper::IMAPWrapper(const std::string &host,
     password(password)
 {
     url = "imaps://";
-    url += host + ":" + extString::toString(port);
+    url += host + ":" + ExtString::toString(port);
 }
 
 bool jw78::IMAPWrapper::fetchFolder(std::string &errorMessage)
@@ -26,18 +26,18 @@ bool jw78::IMAPWrapper::fetchFolder(std::string &errorMessage)
         return false;
     }
     std::vector<std::string> lines;
-    extString::split(result, "\r\n", lines);
+    ExtString::split(result, "\r\n", lines);
     IMAPFolders tempFolder;
     for (size_t i(0); i < lines.size(); ++i)
     {
-        std::string l(extString::trim(lines[i]));
-        std::string attributes(extString::between(l, "(", ")", false));
+        std::string l(ExtString::trim(lines[i]));
+        std::string attributes(ExtString::between(l, "(", ")", false));
         IMAPFolder *f(new IMAPFolder);
         tempFolder.insert(f);
-        extString::split(attributes, " ", f->attributes);
-        l = extString::rightOf(l, "\"/\" ");
-        l = extString::unQuote(l, "\"", "\\");
-        extString::split(l, "/", f->name);
+        ExtString::split(attributes, " ", f->attributes);
+        l = ExtString::rightOf(l, "\"/\" ");
+        l = ExtString::unQuote(l, "\"", "\\");
+        ExtString::split(l, "/", f->name);
     }
     IMAPFolders::iterator it(tempFolder.begin());
     while (it != tempFolder.end())
@@ -93,21 +93,21 @@ bool jw78::IMAPWrapper::updateFolder(jw78::IMAPWrapper::IMAPFolder &folder)
         return false;
     }
     std::vector<std::string> status;
-    extString::splitBetween(result, "(", ")", false, " ", status);
+    ExtString::splitBetween(result, "(", ")", false, " ", status);
     for (size_t i(0); i < status.size(); ++i)
     {
         std::string &s(status[i]);
         if (s == "MESSAGES")
         {
-            extString::to(status[i + 1], folder.messages);
+            ExtString::to(status[i + 1], folder.messages);
         }
         if (s == "RECENT")
         {
-            extString::to(status[i + 1], folder.recent);
+            ExtString::to(status[i + 1], folder.recent);
         }
         if (s == "UNSEEN")
         {
-            extString::to(status[i + 1], folder.unseen);
+            ExtString::to(status[i + 1], folder.unseen);
         }
     }
 
@@ -119,11 +119,11 @@ bool jw78::IMAPWrapper::updateFolder(jw78::IMAPWrapper::IMAPFolder &folder)
         return false;
     }
     std::vector<std::string> lines;
-    extString::split(result, "\r\n", lines);
+    ExtString::split(result, "\r\n", lines);
     for (size_t i(0); i < lines.size(); ++i)
     {
         std::vector<std::string> data;
-        extString::splitBetween(lines[i], "(", ")", false, " ", data);
+        ExtString::splitBetween(lines[i], "(", ")", false, " ", data);
         folder.emails.push_back(new EMailWrapper(data[1], ""));
         std::cout << data[1] << std::endl;
     }
@@ -144,7 +144,8 @@ bool jw78::IMAPWrapper::fetchEMail(const std::string &uid)
     std::cout << errorMessage << std::endl;
 }
 
-bool jw78::IMAPWrapper::fetchHeader(const std::string &uid)
+bool jw78::IMAPWrapper::fetchHeader(const std::string &uid,
+                                    std::string &header)
 {
     CurlWrapper curl;
     curl.setUserAndPassword(user, password);
@@ -152,10 +153,22 @@ bool jw78::IMAPWrapper::fetchHeader(const std::string &uid)
     myUrl += "/inbox/;uid=";
     myUrl += uid;
     myUrl += ";section=HEADER";
-    std::string result;
     std::string errorMessage;
-    curl.get(myUrl, result, errorMessage);
-    std::cout << result << std::endl;
+    curl.get(myUrl, header, errorMessage);
+    std::cout << errorMessage << std::endl;
+}
+
+bool jw78::IMAPWrapper::fetchText(const std::string &uid,
+                                    std::string &text)
+{
+    CurlWrapper curl;
+    curl.setUserAndPassword(user, password);
+    std::string myUrl(url);
+    myUrl += "/inbox/;uid=";
+    myUrl += uid;
+    myUrl += ";section=TEXT";
+    std::string errorMessage;
+    curl.get(myUrl, text, errorMessage);
     std::cout << errorMessage << std::endl;
 }
 
@@ -206,5 +219,5 @@ std::string jw78::IMAPWrapper::IMAPFolder::getFullName()
 
 std::string jw78::IMAPWrapper::IMAPFolder::getInfoString()
 {
-    return getFullName() + " Messages: " + extString::toString(messages) + " Unseen:" + extString::toString(unseen) + " Recent: " + extString::toString(recent);
+    return getFullName() + " Messages: " + ExtString::toString(messages) + " Unseen:" + ExtString::toString(unseen) + " Recent: " + ExtString::toString(recent);
 }
