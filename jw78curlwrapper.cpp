@@ -14,10 +14,10 @@ size_t jw78::myWriteFunction(void *contents, size_t size, size_t nmemb, void *us
 }
 
 int jw78::myDebugFunction(CURL *handle,
-                   curl_infotype type,
-                   char *data,
-                   size_t size,
-                   void *userptr)
+                          curl_infotype type,
+                          char *data,
+                          size_t size,
+                          void *userptr)
 {
     jw78::CurlWrapper::sTarget *target(static_cast<jw78::CurlWrapper::sTarget*>(userptr));
     target->addDebug(data, size);
@@ -30,12 +30,19 @@ size_t jw78::payloadSource(void *ptr, size_t size, size_t nmemb, void *userp)
     {
         return 0;
     }
+    size_t len(size * nmemb);
+
     jw78::CurlWrapper *curlWrapper((jw78::CurlWrapper*)userp);
+    std::ifstream &stream(curlWrapper->payloadStream);
+    if (stream.is_open())
+    {
+        stream.read((char*)ptr, len);
+        return stream.gcount();
+    }
     if (curlWrapper->payloadPosition >= curlWrapper->payload.size())
     {
         return 0;
     }
-    size_t len(size * nmemb);
     len = std::min(len, curlWrapper->payload.size() - curlWrapper->payloadPosition);
     std::memcpy(ptr,
                 (const void*)&(curlWrapper->payload.data()[curlWrapper->payloadPosition]),
@@ -88,9 +95,9 @@ void jw78::CurlWrapper::setUserAndPassword(const std::string &user, const std::s
 }
 
 bool jw78::CurlWrapper::pop3NumberAndSizes(const std::string &host,
-                                         const std::string &user,
-                                         const std::string &password,
-                                         std::string &target)
+                                           const std::string &user,
+                                           const std::string &password,
+                                           std::string &target)
 {
     setUserAndPassword(user, password);
     std::string url("pop3s://");
@@ -103,10 +110,10 @@ bool jw78::CurlWrapper::pop3NumberAndSizes(const std::string &host,
 
 
 bool jw78::CurlWrapper::pop3Retrieve(const std::string &host,
-                                   const std::string &user,
-                                   const std::string &password,
-                                   const int number,
-                                   std::string &target)
+                                     const std::string &user,
+                                     const std::string &password,
+                                     const int number,
+                                     std::string &target)
 {
     setUserAndPassword(user, password);
     std::stringstream ss;
@@ -120,9 +127,9 @@ bool jw78::CurlWrapper::pop3Retrieve(const std::string &host,
 }
 
 bool jw78::CurlWrapper::pop3Delete(const std::string &host,
-                                 const std::string &user,
-                                 const std::string &password,
-                                 const int number)
+                                   const std::string &user,
+                                   const std::string &password,
+                                   const int number)
 {
     setUserAndPassword(user, password);
     std::stringstream ss;
@@ -140,14 +147,14 @@ bool jw78::CurlWrapper::pop3Delete(const std::string &host,
 }
 
 void jw78::CurlWrapper::smtpSendMail(const std::string &host,
-                                   const std::string &user,
-                                   const std::string &password,
-                                   const std::string &mailFrom,
-                                   std::vector<std::string> toAddr,
-                                   std::vector<std::string> ccAddr,
-                                   std::vector<std::string> bccAddr,
-                                   const std::string &emailPayload,
-                                   std::string &logResult)
+                                     const std::string &user,
+                                     const std::string &password,
+                                     const std::string &mailFrom,
+                                     std::vector<std::string> toAddr,
+                                     std::vector<std::string> ccAddr,
+                                     std::vector<std::string> bccAddr,
+                                     const std::string &emailPayload,
+                                     std::string &logResult)
 {
     setOpt(CURLOPT_USERNAME, user);
     setOpt(CURLOPT_PASSWORD, password);
@@ -202,9 +209,9 @@ bool jw78::CurlWrapper::get(const std::string &url,
 }
 
 bool jw78::CurlWrapper::httpsPost(const std::string &url,
-                                const std::string &postData,
-                                std::string &result,
-                                std::string &message)
+                                  const std::string &postData,
+                                  std::string &result,
+                                  std::string &message)
 {
     setOpt(CURLOPT_POSTFIELDS, postData);
     setOpt(CURLOPT_URL, url);
@@ -220,4 +227,30 @@ CURLcode jw78::CurlWrapper::curlPerformToString(std::string &result)
     curl_easy_setopt(curl, CURLOPT_DEBUGDATA, (void *)&target);
     CURLcode code(curl_easy_perform(curl));
     return code;
+}
+
+bool jw78::CurlWrapper::sftpUpload(const std::string &remoteUrl,
+                                   const std::string &filename,
+                                   std::string &message)
+{
+    payloadStream.open(filename, std::ios::binary);
+    if (!payloadStream)
+    {
+        message = std::string("could not open ") + filename;
+        return false;
+    }
+
+    curl_easy_setopt(curl, CURLOPT_UPLOAD, 1L);
+    curl_easy_setopt(curl, CURLOPT_URL, remoteUrl.c_str());
+    curl_easy_setopt(curl, CURLOPT_READFUNCTION, payloadSource);
+    curl_easy_setopt(curl, CURLOPT_READDATA, this);
+
+    CURLcode result(curl_easy_perform(curl));
+    if (result == CURLE_OK)
+    {
+        return true;
+    }
+
+    message = std::string("sftp error: ") + curl_easy_strerror(result);
+    return false;
 }

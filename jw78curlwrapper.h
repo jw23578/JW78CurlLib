@@ -16,6 +16,7 @@ class CurlWrapper
                                char *data,
                                size_t size,
                                void *userptr);
+    std::ifstream payloadStream;
     std::string payload;
     size_t payloadPosition;
     friend size_t payloadSource(void *ptr, size_t size, size_t nmemb, void *userp);
@@ -97,6 +98,10 @@ public:
                    std::string &message);
 
     CURLcode curlPerformToString(std::string &result);
+
+    bool sftpUpload(const std::string &remoteUrl,
+                    const std::string &filename,
+                    std::string &message);
 };
 
 }
