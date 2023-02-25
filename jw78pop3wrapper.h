@@ -1,6 +1,8 @@
 #ifndef JW78POP3WRAPPER_H
 #define JW78POP3WRAPPER_H
 
+// Ein Kommentar
+
 #ifdef JW78_WITH_POP3
 
 #include "jw78curlwrapper.h"
