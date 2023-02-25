@@ -1,6 +1,8 @@
 #ifndef SMTPWRAPPER_H
 #define SMTPWRAPPER_H
 
+#ifdef JW78_WITH_SMTP
+
 #include <set>
 #include <map>
 #include <vector>
@@ -73,6 +75,6 @@ void SMTPSender_hook(SMTPSender *sender);
 }
 
 
-
+#endif // JW78_WITH_SMTP
 
 #endif // SMTPWRAPPER_H

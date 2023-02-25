@@ -1,4 +1,7 @@
 #include "jw78pop3wrapper.h"
+
+#ifdef JW78_WITH_POP3
+
 #include "utils/extstring.h"
 
 jw78::Pop3Wrapper::Pop3Wrapper(const std::string &h,
@@ -45,3 +48,5 @@ void jw78::Pop3Wrapper::eMailSizes(std::vector<size_t> &sizes)
         }
     }
 }
+
+#endif // JW78_WITH_POP3

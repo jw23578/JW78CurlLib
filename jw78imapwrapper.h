@@ -1,6 +1,8 @@
 #ifndef IMAPWRAPPER_H
 #define IMAPWRAPPER_H
 
+#ifdef JW78_WITH_IMAP
+
 #include <string>
 #include <set>
 #include <vector>
@@ -52,5 +54,6 @@ public:
 
 }
 
+#endif // JW78_WITH_IMAP
 
 #endif // IMAPWRAPPER_H

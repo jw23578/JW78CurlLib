@@ -1,5 +1,7 @@
 #include "jw78smtpwrapper.h"
 
+#ifdef JW78_WITH_SMTP
+
 #include <iostream>
 #include <fstream>
 #include <cstring>
@@ -366,3 +368,5 @@ void jw78::SMTPSender::add(SMTPWrapper *email)
 {
     mailsToSend.enqueue(email);
 }
+
+#endif // JW78_WITH_SMTP

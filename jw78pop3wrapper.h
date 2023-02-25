@@ -1,6 +1,8 @@
 #ifndef JW78POP3WRAPPER_H
 #define JW78POP3WRAPPER_H
 
+#ifdef JW78_WITH_POP3
+
 #include "jw78curlwrapper.h"
 #include <string>
 #include <vector>
@@ -27,5 +29,7 @@ public:
 };
 
 }
+
+#endif // JW78_WITH_POP3
 
 #endif // JW78POP3WRAPPER_H

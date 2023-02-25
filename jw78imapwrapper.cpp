@@ -1,5 +1,8 @@
 #include "jw78imapwrapper.h"
 #include "jw78curlwrapper.h"
+
+#ifdef JW78_WITH_IMAP
+
 #include "utils/extstring.h"
 #include "utils/extvector.h"
 
@@ -221,3 +224,5 @@ std::string jw78::IMAPWrapper::IMAPFolder::getInfoString()
 {
     return getFullName() + " Messages: " + ExtString::toString(messages) + " Unseen:" + ExtString::toString(unseen) + " Recent: " + ExtString::toString(recent);
 }
+
+#endif // JW78_WITH_IMAP
